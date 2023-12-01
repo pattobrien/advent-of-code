@@ -4,24 +4,23 @@ import { readFileSync, writeFileSync } from 'fs';
 const input = readFileSync('src/input.txt', 'utf8');
 const lines = input.split('\n');
 
-export function part1Parse(line: string): number {
+export function parserPart1(line: string): number {
   const singleDigitRegex = /\d/g;
   const matches = line.match(singleDigitRegex)!;
 
-  const lastDigitIndex = matches.length - 1;
-  const matchFirst = matches[0];
-  const matchLast = matches[lastDigitIndex];
+  const firstDigit = matches[0];
+  const lastDigit = matches[matches.length - 1];
 
-  return parseInt(matchFirst + matchLast);
+  return parseInt(firstDigit + lastDigit);
 }
 
-export const codes = lines.map((line) => part1Parse(line));
+export const codesPart1 = lines.map((line) => parserPart1(line));
 
-const sumOfCodes = codes.reduce((code, current) => code + current);
+const sumPart1 = codesPart1.reduce((code, current) => code + current);
 
-console.log(`Part 1 answer is: ${sumOfCodes}`);
+console.log(`Part 1 answer: ${sumPart1}`);
 
-writeFileSync('src/output.txt', `${sumOfCodes}`);
+writeFileSync('src/output.txt', `${sumPart1}`);
 
 const singleDigitRegex = /\d/;
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
@@ -40,6 +39,7 @@ const regexpDigitMap: { [key: string]: number } = {
 
 export function matchToDigit(match: string): number {
   const isSingleDigit = (value: string): boolean => /\d/.test(value);
+
   if (isSingleDigit(match)) {
     return parseInt(match);
   } else {
@@ -47,28 +47,23 @@ export function matchToDigit(match: string): number {
   }
 }
 
-export function part2Parse(line: string): number {
-  const newregex = ['\\d', ...Object.keys(regexpDigitMap)];
-  const joinedRegex = new RegExp(`(?=(${newregex.join('|')}))`, 'g');
-  const matches = Array.from(line.matchAll(joinedRegex), (m) => m[1]);
+export function parserPart2(line: string): number {
+  const regexArray = ['\\d', ...Object.keys(regexpDigitMap)];
+  const concatenatedRegex = new RegExp(`(?=(${regexArray.join('|')}))`, 'g');
 
-  const matchesToDigits = matches.map((match) => matchToDigit(match));
+  const matches = Array.from(line.matchAll(concatenatedRegex), (m) => m[1]);
+  const digits = matches.map((match) => matchToDigit(match));
 
-  const lastDigitIndex = matchesToDigits.length - 1;
-  const matchFirst = matchesToDigits[0];
-  const matchLast = matchesToDigits[lastDigitIndex];
+  const digitFirst = digits[0];
+  const digitLast = digits[digits.length - 1];
 
-  const bothDigits = matchFirst.toString() + matchLast.toString();
-
-  return parseInt(bothDigits);
+  return parseInt(digitFirst.toString() + digitLast.toString());
 }
 
-export const codes2 = lines.map((line) => part2Parse(line));
+export const codesPart2 = lines.map((line) => parserPart2(line));
 
-const sumOfCodes2 = codes2.reduce((c, v) => c + v);
+const sumPart2 = codesPart2.reduce((c, v) => c + v);
 
-console.log(`Part 2 answer is: ${sumOfCodes2}`);
+console.log(`Part 2 answer is: ${sumPart2}`);
 
-writeFileSync('src/output2.txt', `${sumOfCodes2}`);
-
-// void uploadAnswer(1, 2, sumOfCodes2.toString());
+writeFileSync('src/output2.txt', `${sumPart2}`);
