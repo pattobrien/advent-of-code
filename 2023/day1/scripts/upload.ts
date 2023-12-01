@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
-import { adventOfCodeUrl, day, sessionCookie } from './core';
+import { adventOfCodeUrl, day, level, sessionCookie } from './core';
 
-const uploadAnswer = async (
+export const uploadAnswer = async (
   day: number,
   level: number,
   answer: string
@@ -10,21 +10,21 @@ const uploadAnswer = async (
     method: 'POST',
     headers: {
       Cookie: `session=${sessionCookie}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
+      // 'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: `level=${level}&answer=${answer}`,
   });
 
   if (response.ok) {
-    const content = await response.text();
-    console.log('Answer response:', content); // You may want to parse this content according to your needs
+    console.log('Correct answer!!');
+    console.log(await response.text());
   } else {
     console.error('Failed to upload answer:', response.statusText);
   }
 };
 
-const level = 1; // Replace with 1 or 2 for the corresponding part of the puzzle
+// const level = 1; // TODO: dynamically replace
 
-const answer = readFileSync('src/output.txt');
+const answer = readFileSync('src/output2.txt');
 
 void uploadAnswer(day, level, answer.toString());
