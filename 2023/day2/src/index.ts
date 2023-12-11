@@ -25,13 +25,43 @@ function getInput(): string {
   return input;
 }
 
+export function getMinimumCubes(game: CubeGame): {
+  green: number;
+  blue: number;
+  red: number;
+} {
+  const blues = game.sets.map((e) => e.blue);
+  const reds = game.sets.map((e) => e.red);
+  const greens = game.sets.map((e) => e.green);
+
+  return {
+    green: Math.max(...greens),
+    blue: Math.max(...blues),
+    red: Math.max(...reds),
+  };
+}
+
+export function calculatePower(game: CubeGame): number {
+  const minimumCubes = getMinimumCubes(game);
+  return minimumCubes.blue * minimumCubes.green * minimumCubes.red;
+}
+
+export function getSumOfPowers(record: CubeRecord): number {
+  const powers = record.games.map((e) => calculatePower(e));
+  return powers.reduce((p, c) => p + c, 0);
+}
+
 async function main(): Promise<void> {
   const input = getInput();
   const record = parseRecord(input);
 
   const idsSum = getSumOfPossibleGameIds(record);
 
-  console.log(`sum: ${idsSum}`);
+  console.log(`PART 1: sum of possible game ids: ${idsSum}`);
+
+  const sumOfPowers = getSumOfPowers(record);
+
+  console.log(`PART 2: sum of powers of all games: ${sumOfPowers}`);
 }
 
 export function getSumOfPossibleGameIds(record: CubeRecord): number {
@@ -40,19 +70,16 @@ export function getSumOfPossibleGameIds(record: CubeRecord): number {
     maxGreen: 13,
     maxRed: 12,
   };
-  // const possibleGames = record.games.map((e, i) => {
-  //   return !isImpossibleGame(e, maxs);
-  // });
 
   const possibleGameIds = record.games.map((e, i) => {
     return !isImpossibleGame(e, maxs) ? i + 1 : null;
   });
 
-  console.log(`possible games ids: ${possibleGameIds}`);
+  // console.log(`possible games ids: ${possibleGameIds}`);
 
   const idSum = possibleGameIds.reduce((p, c) => (p ?? 0) + (c ?? 0), 0) ?? 0;
 
-  console.log(`id sum: ${idSum}`);
+  // console.log(`id sum: ${idSum}`);
 
   return idSum;
 }
